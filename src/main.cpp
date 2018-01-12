@@ -33,7 +33,7 @@ int main()
   double delta_t = 0.1; // Time elapsed between measurements [sec]
   double sensor_range = 50; // Sensor range [m]
 
-  double sigma_pos [3] = {0.3, 0.3, 0.01}; // GPS measurement uncertainty [x [m], y [m], theta [rad]]
+  double sigma_pos [3] = {0.3, 0.3, 0.02}; // GPS measurement uncertainty [x [m], y [m], theta [rad]]
   double sigma_landmark [2] = {0.3, 0.3}; // Landmark measurement uncertainty [x [m], y [m]]
 
   // Read map data
@@ -55,12 +55,14 @@ int main()
     {
 
       auto s = hasData(std::string(data));
+
       if (s != "") {
-      	
-      	
+
+
         auto j = json::parse(s);
+
         std::string event = j[0].get<std::string>();
-        
+        std::cout << event << '\n';
         if (event == "telemetry") {
           // j[1] is the data JSON object
 
@@ -95,7 +97,7 @@ int main()
         	std::istream_iterator<float>(),
         	std::back_inserter(x_sense));
 
-        	std::vector<float> y_sense;
+        std::vector<float> y_sense;
   			std::istringstream iss_y(sense_observations_y);
 
   			std::copy(std::istream_iterator<float>(iss_y),
@@ -113,6 +115,7 @@ int main()
 		  // Update the weights and resample
 		  pf.updateWeights(sensor_range, sigma_landmark, noisy_observations, map);
 		  pf.resample();
+
 
 		  // Calculate and output the average weighted error of the particle filter over all time steps so far.
 		  vector<Particle> particles = pf.particles;
@@ -141,9 +144,10 @@ int main()
           msgJson["best_particle_sense_y"] = pf.getSenseY(best_particle);
 
           auto msg = "42[\"best_particle\"," + msgJson.dump() + "]";
-          // std::cout << msg << std::endl;
+
+          std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
-	  
+
         }
       } else {
         std::string msg = "42[\"manual\",{}]";
@@ -189,90 +193,3 @@ int main()
   }
   h.run();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
